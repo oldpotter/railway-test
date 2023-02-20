@@ -34,11 +34,11 @@ async def download_url(url: str, out: str, info: str):
 # def index():
 #     return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
 class HelloWorld(Resource):
-    def get(self):
+    def get(self, bvid):
             # 实例化 Credential 类
         credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
         # 实例化 Video 类
-        v = video.Video(bvid="BV1AV411x7Gs", credential=credential)
+        v = video.Video(bvid=bvid, credential=credential)
         # 获取视频下载链接
         download_url_data = sync( v.get_download_url(0))
         # 解析视频下载信息
@@ -59,14 +59,14 @@ class HelloWorld(Resource):
             # 混流
             os.system(f'{FFMPEG_PATH} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy video.mp4')
             # 删除临时文件
-    #         os.remove("video_temp.m4s")
-    #         os.remove("audio_temp.m4s")
+            os.remove("video_temp.m4s")
+            os.remove("audio_temp.m4s")
 
         print('已下载为：video.mp4')
         return make_response(send_from_directory('./', 'video.mp4', as_attachment=True))
         
 
-api.add_resource(HelloWorld, '/')
+api.add_resource(HelloWorld, '/<string:bvid>')
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
